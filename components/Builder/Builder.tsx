@@ -69,7 +69,6 @@ export default function Builder({ formID }: BuilderProps) {
     option_id: string,
     question_id: string
   ) => {
-    console.log(newOptionContent, option_id, question_id);
     dispatchFormAction({
       type: ActionTypes.EDIT_OPTION,
       payload: {
