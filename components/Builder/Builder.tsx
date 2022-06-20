@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { nanoid } from "nanoid";
 
 import { PlusSmIcon } from "@heroicons/react/solid";
@@ -22,6 +22,24 @@ export default function Builder({ formID }: BuilderProps) {
   const formTitle = currentForm?.form_content.title;
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const [editedFormTitle, setEditedFormTitle] = useState("");
+
+  useEffect(() => {
+    // Check the FormsContext to see if we have any data
+    // If we don't, we can assume that the user tried to access this page directly (instead of going to /home first, and then click on a form)
+    // In this case, we fetch data
+  }, []);
+
+  const editForm = () => {
+    if (editedFormTitle === formTitle) return;
+
+    dispatchFormAction({
+      type: ActionTypes.EDIT_FORM,
+      payload: {
+        form_id: formID,
+        newFormTitle: editedFormTitle,
+      },
+    });
+  };
 
   const createQuestion = () => {
     if (!formID || Array.isArray(formID)) return;
@@ -95,7 +113,10 @@ export default function Builder({ formID }: BuilderProps) {
           <Input
             placeholder="Title"
             className="py-2 px-2 w-full text-2xl"
-            onBlur={() => setIsEditingTitle(false)}
+            onBlur={() => {
+              setIsEditingTitle(false);
+              editForm();
+            }}
             value={editedFormTitle}
             onChange={(e) => setEditedFormTitle(e.target.value)}
             onFocus={() => setEditedFormTitle(formTitle || "")}
@@ -105,7 +126,10 @@ export default function Builder({ formID }: BuilderProps) {
           <Input
             placeholder="Title"
             className="py-2 px-2 w-full text-2xl"
-            onBlur={() => setIsEditingTitle(false)}
+            onBlur={() => {
+              setIsEditingTitle(false);
+              editForm();
+            }}
             value={editedFormTitle}
             onChange={(e) => setEditedFormTitle(e.target.value)}
             onFocus={() => setIsEditingTitle(true)}

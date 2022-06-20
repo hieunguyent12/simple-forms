@@ -22,6 +22,11 @@ export enum ActionTypes {
 
 type ActionPayloads = {
   [ActionTypes.INITIALIZE_DATA]: FormType[];
+  [ActionTypes.CREATE_FORM]: FormType;
+  [ActionTypes.EDIT_FORM]: {
+    form_id: string;
+    newFormTitle: string;
+  };
   [ActionTypes.CREATE_QUESTION]: {
     form_id: string;
     question: QuestionType;
@@ -31,7 +36,6 @@ type ActionPayloads = {
     form_id: string;
     option: OptionType;
   };
-  [ActionTypes.CREATE_FORM]: FormType;
   [ActionTypes.EDIT_QUESTION]: {
     form_id: string;
     question_id: string;
@@ -65,23 +69,18 @@ function formStateReducer(state: FormType[], action: FormAction) {
     case ActionTypes.CREATE_FORM:
       state.push(action.payload);
       return state;
+    case ActionTypes.EDIT_FORM:
+      form = state.find((form) => form.id === action.payload.form_id);
+      if (form) {
+        form.form_content.title = action.payload.newFormTitle;
+      }
+      return state;
     case ActionTypes.CREATE_QUESTION:
       // TODO: do this inside an api
       form = state.find((form) => form.id === action.payload.form_id);
 
       if (form) {
         form.form_content.questions.push(action.payload.question);
-      }
-
-      return state;
-    case ActionTypes.CREATE_OPTION:
-      form = state.find((form) => form.id === action.payload.form_id);
-
-      if (form) {
-        const question = form.form_content.questions.find(
-          (question) => question.question_id === action.payload.question_id
-        );
-        question?.options.push(action.payload.option);
       }
 
       return state;
@@ -99,6 +98,33 @@ function formStateReducer(state: FormType[], action: FormAction) {
       }
 
       return state;
+    case ActionTypes.CREATE_OPTION:
+      form = state.find((form) => form.id === action.payload.form_id);
+
+      if (form) {
+        const question = form.form_content.questions.find(
+          (question) => question.question_id === action.payload.question_id
+        );
+        question?.options.push(action.payload.option);
+      }
+
+      return state;
+    case ActionTypes.EDIT_OPTION:
+      form = state.find((form) => form.id === action.payload.form_id);
+      if (form) {
+        const question = form.form_content.questions.find(
+          (question) => question.question_id === action.payload.question_id
+        );
+        const option = question?.options.find(
+          (option) => option.option_id === action.payload.option_id
+        );
+
+        if (option) {
+          option.option_content = action.payload.newOptionContent;
+        }
+      }
+      return state;
+
     default:
       return state;
   }
@@ -127,6 +153,20 @@ function FormsProvider({ children }: { children: JSX.Element }) {
         delete action.payload.id;
 
         await addDoc(formsCollection, action.payload);
+      }
+
+      if (action.type === ActionTypes.EDIT_FORM) {
+        const currentForm = forms.find(
+          (form) => form.id === action.payload.form_id
+        );
+
+        if (currentForm) {
+          const docRef = doc(db, "forms", currentForm.id);
+
+          await updateDoc(docRef, {
+            "form_content.title": action.payload.newFormTitle,
+          });
+        }
       }
 
       if (action.type === ActionTypes.CREATE_QUESTION) {
