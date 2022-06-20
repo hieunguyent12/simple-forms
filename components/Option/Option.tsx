@@ -8,10 +8,10 @@ import RadioInput from "../RadioInput";
 type OptionProps = {
   label: string;
   id: string;
-  // updateOption: (optionContent: string) => void;
-  // removeOption: () => void;
   isInEditingMode: boolean;
   editOption: (newContent: string, option_id: string) => void;
+  selectOption?: (option_id: string) => void;
+  question_id: string;
 };
 
 export default function Option({
@@ -19,6 +19,8 @@ export default function Option({
   id,
   editOption,
   isInEditingMode,
+  selectOption,
+  question_id,
 }: OptionProps) {
   const [optionContent, setOptionContent] = useState(label);
   const [isEditing, setIsEditing] = useState(false);
@@ -60,10 +62,16 @@ export default function Option({
     >
       <RadioInput
         inputId={id}
+        question_id={question_id}
         label={label}
         disabled={isInEditingMode}
         style={{
           minWidth: "16px",
+        }}
+        onClick={(e) => {
+          if (!isInEditingMode && selectOption) {
+            selectOption(id);
+          }
         }}
       />
       {isEditing ? (

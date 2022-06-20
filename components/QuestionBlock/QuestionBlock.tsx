@@ -14,6 +14,7 @@ type CommonProps = {
     question_id: string,
     option_id: string
   ) => void;
+  selectOption?: (question_id: string, option_id: string) => void;
 };
 
 type Temp = Omit<CommonProps, "question">;
@@ -38,6 +39,7 @@ export default function QuestionBlock<T>({
   isInEditingMode,
   createOption,
   editOption,
+  selectOption,
 }: EditingModeProps | PreviewModeProps) {
   const [questionContent, setQuestionContent] = useState(
     question.question_content
@@ -103,11 +105,15 @@ export default function QuestionBlock<T>({
           <Option
             label={option.option_content}
             id={option.option_id}
+            question_id={question.question_id}
             key={option.option_id}
             isInEditingMode={isInEditingMode}
             editOption={(newContent: string, option_id: string) => {
               isInEditingMode &&
                 editOption(newContent, option_id, question.question_id);
+            }}
+            selectOption={(option_id: string) => {
+              selectOption && selectOption(question.question_id, option_id);
             }}
           />
         ))}

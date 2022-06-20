@@ -35,7 +35,11 @@ Survey:
 
 - for the responses, each response has its own "document" in the db
 - responses = [
+  {
+  form_id,
+  username,
   id,
   surveyId,
-  choiceId -- this field refers to the ID of the choice that this user has chosen
+  choiceId
+  }
   ]
