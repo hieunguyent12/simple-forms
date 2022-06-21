@@ -63,6 +63,8 @@ export default function FormsList() {
         type: ActionTypes.INITIALIZE_DATA,
         payload: formsData,
       });
+
+      (window as any).SIMPLE_FORMS_DATA_INITIALIZED = true;
     }
     fetchForms();
     // eslint-disable-next-line

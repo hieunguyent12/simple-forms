@@ -1,16 +1,23 @@
-import { collection, where, query, getDocs } from "firebase/firestore";
+import {
+  collection,
+  where,
+  query,
+  getDocs,
+  doc,
+  getDoc,
+} from "firebase/firestore";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
-import { useForms } from "../../context/FormsContext";
+import { ActionTypes, useForms } from "../../context/FormsContext";
 import { db } from "../../firebase";
-import { QuestionType, ResponseType } from "../../types";
+import { FormType, QuestionType, ResponseType } from "../../types";
 
 export default function Responses() {
   const router = useRouter();
   const formID = router.query.formID as string;
 
-  const { forms } = useForms();
+  const { forms, dispatchFormAction } = useForms();
   const currentForm = forms.find((form) => form.id === formID)!;
 
   const [responses, setResponses] = useState<ResponseType[]>([]);
@@ -86,6 +93,9 @@ export default function Responses() {
       </div>
     );
   };
+
+  if (!currentForm) return null;
+
   return (
     <div>
       <p className="py-4">{responses.length} Responses</p>

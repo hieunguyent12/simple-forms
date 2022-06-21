@@ -1,4 +1,10 @@
-import { createContext, Dispatch, useContext, useReducer } from "react";
+import {
+  createContext,
+  Dispatch,
+  useContext,
+  useReducer,
+  useCallback,
+} from "react";
 import { useImmerReducer } from "use-immer";
 import { collection, addDoc, doc, updateDoc } from "firebase/firestore";
 import produce from "immer";
@@ -141,8 +147,11 @@ function FormsProvider({ children }: { children: JSX.Element }) {
     []
   );
 
-  const enhaceDispatch = (dispatch: (action: FormAction) => void) => {
-    return async (action: FormAction) => {
+  // BE VERY CAREFUL!!!!!!!!!! =============
+  // This dispatch could cause infinite loop
+  // TODO: find a better approach
+  const enhancedDispatch = useCallback(
+    async (action: FormAction) => {
       const formsCollection = collection(db, "forms");
 
       // in here, we are making updates on firestore and then calling the dispatch function to update
@@ -280,13 +289,14 @@ function FormsProvider({ children }: { children: JSX.Element }) {
         }
       }
 
-      dispatch(action);
-    };
-  };
+      dispatchFormAction(action);
+    },
+    [forms, dispatchFormAction]
+  );
 
   return (
     <FormsContext.Provider
-      value={{ forms, dispatchFormAction: enhaceDispatch(dispatchFormAction) }}
+      value={{ forms, dispatchFormAction: enhancedDispatch }}
     >
       {children}
     </FormsContext.Provider>

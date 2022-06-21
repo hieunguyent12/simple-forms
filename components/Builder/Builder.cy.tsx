@@ -47,7 +47,8 @@ function PopulateContextComponent({ children }: any) {
       type: ActionTypes.INITIALIZE_DATA,
       payload: dummyData,
     });
-  }, [dispatchFormAction]);
+    // eslint-disable-next-line
+  }, []);
 
   return children;
 }
