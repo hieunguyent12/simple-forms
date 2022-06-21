@@ -1,6 +1,6 @@
 import Head from "next/head";
 
-import { ExtendedNextPage } from "../types";
+import { ExtendedNextPage, FormType } from "../types";
 import Builder from "../components/Builder";
 import { useRouter } from "next/router";
 
