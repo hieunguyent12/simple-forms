@@ -163,7 +163,7 @@ export default function Builder({ formID }: BuilderProps) {
             </div>
             <div
               className="flex items-center ml-2 text-gray-500 p-1 hover:text-indigo-500 hover:bg-indigo-100 rounded-md cursor-pointer"
-              onClick={share}
+              onClick={() => router.push(`/responses?formID=${formID}`)}
               data-testid="responsesBtn"
             >
               <span>0</span>

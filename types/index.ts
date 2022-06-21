@@ -21,4 +21,11 @@ export type OptionType = {
   option_content: string;
 };
 
+export type ResponseType = {
+  response_id: string;
+  form_id: string;
+  questionsAndChoices: { option_id: string; question_id: string }[];
+  user: string;
+};
+
 export type ExtendedNextPage = NextPage & { auth: boolean };
