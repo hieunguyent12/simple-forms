@@ -161,7 +161,8 @@ function FormsProvider({ children }: { children: JSX.Element }) {
         // @ts-ignore - we are deleting the placeholder "id" here. Firebase will automically generate an ID for us.
         delete action.payload.id;
 
-        await addDoc(formsCollection, action.payload);
+        const doc = await addDoc(formsCollection, action.payload);
+        action.payload.id = doc.id; // assign the payload the actual ID that firebase generated for us
       }
 
       if (action.type === ActionTypes.EDIT_FORM) {
