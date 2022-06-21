@@ -15,3 +15,7 @@
     min-width: inherit;
   }
 }
+
+.container-preview-canvas {
+  background-color: #eef2ff;
+}
