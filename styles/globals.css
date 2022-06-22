@@ -2,6 +2,11 @@
 @tailwind components;
 @tailwind utilities;
 
+* {
+  margin: 0;
+  padding: 0;
+}
+
 .builder-content-container,
 .home-container {
   width: 650px;
@@ -18,4 +23,8 @@
 
 .container-preview-canvas {
   background-color: #eef2ff;
+}
+
+.m {
+  margin-top: 0;
 }

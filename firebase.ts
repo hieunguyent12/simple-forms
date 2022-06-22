@@ -3,6 +3,7 @@ import { getAnalytics } from "firebase/analytics";
 import { initializeApp } from "firebase/app";
 import { getAuth, GoogleAuthProvider } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
+import { getStorage } from "firebase/storage";
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_apiKey,
@@ -27,5 +28,6 @@ googleProvider.addScope("https://www.googleapis.com/auth/contacts.readonly");
 
 const db = getFirestore(app);
 const auth = getAuth(app);
+const storage = getStorage();
 
-export { db, auth, googleProvider };
+export { db, auth, googleProvider, storage };

@@ -3,6 +3,7 @@ import { NextPage } from "next";
 export type FormType = {
   id: string;
   owner_id: string;
+  preview_url: string;
 
   form_content: {
     title: string;

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { nanoid } from "nanoid";
-
+import { ref, uploadString, getDownloadURL } from "firebase/storage";
+import { updateDoc } from "firebase/firestore";
 import { PlusSmIcon } from "@heroicons/react/solid";
 import { PaperAirplaneIcon, EyeIcon } from "@heroicons/react/outline";
 import { useRouter } from "next/router";
@@ -9,8 +10,9 @@ import QuestionBlock from "../QuestionBlock";
 import Input from "../Input";
 import { ActionTypes, useForms } from "../../context/FormsContext";
 import { doc, getDoc } from "firebase/firestore";
-import { db } from "../../firebase";
+import { db, storage } from "../../firebase";
 import { FormType } from "../../types";
+import { generatePreviewCanvas } from "../../utils";
 
 export type BuilderProps = {
   formID: string;
@@ -25,6 +27,30 @@ export default function Builder({ formID }: BuilderProps) {
   const formTitle = currentForm?.form_content.title;
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const [editedFormTitle, setEditedFormTitle] = useState("");
+
+  useEffect(() => {
+    // update preview image
+    async function updatePreviewImage() {
+      if (!currentForm) return;
+
+      const canvas = await generatePreviewCanvas(currentForm);
+
+      const storageRef = ref(storage, currentForm.id);
+
+      const a = canvas.toDataURL();
+
+      uploadString(storageRef, a, "data_url").then((snapshot) => {
+        getDownloadURL(snapshot.ref).then((url) => {
+          const docRef = doc(db, "forms", currentForm.id);
+          updateDoc(docRef, {
+            preview_url: url,
+          });
+        });
+      });
+    }
+
+    updatePreviewImage();
+  }, [currentForm]);
 
   useEffect(() => {
     async function fetchForm() {

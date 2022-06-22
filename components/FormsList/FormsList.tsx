@@ -2,6 +2,7 @@ import { PlusSmIcon } from "@heroicons/react/solid";
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { collection, getDocs, query, where } from "firebase/firestore";
+import Image from "next/image";
 
 import { useAuth } from "../../context/AuthContext";
 import { db } from "../../firebase";
@@ -20,8 +21,9 @@ export default function FormsList() {
       payload: {
         id: "", // empty string because we don't have an id yet (id will created by firebase automatically when adding a new document)
         owner_id: auth.state.user.uid,
+        preview_url: "",
         form_content: {
-          title: "Hiii",
+          title: "Title",
           questions: [
             {
               question_id: nanoid(10),
@@ -47,13 +49,6 @@ export default function FormsList() {
       const formsData: FormType[] = [];
 
       formDocs.forEach(async (doc) => {
-        // const questionsQuery = query(collection(db, "forms", doc.id, "questions"));
-        // const optionsQuery = query(collection(db, "forms", doc.id, "options"));
-
-        // const questionDocs = await getDocs(questionsQuery);
-
-        // questionDocs.forEach((qDoc) => console.log(qDoc.data()));
-
         formsData.push({ ...doc.data(), id: doc.id } as FormType);
       });
 
@@ -88,7 +83,16 @@ export default function FormsList() {
           {forms.map((form) => (
             <Link key={form.id} href={`/builder?formID=${form.id}`}>
               <div className="mr-3 mb-3 border border-slate-200 rounded-md w-[45%] sm:w-[204px] bg-slate-50 shadow shadow-slate-200 hover:shadow-slate-300 cursor-pointer hover:border-indigo-300">
-                <div className="thumbnail-placeholder block w-full h-32 bg-gray-200 rounded-t-md"></div>
+                <div className="thumbnail-placeholder block w-full h-32 rounded-t-md relative bg-indigo-50">
+                  {form.preview_url ? (
+                    <Image
+                      src={form.preview_url}
+                      alt="preview image"
+                      layout="fill"
+                      objectFit="contain"
+                    />
+                  ) : null}
+                </div>
 
                 <div className="p-3">
                   <p>{form.form_content.title}</p>
